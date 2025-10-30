@@ -30,6 +30,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             query_params = event.get('queryStringParameters') or {}
             search_query = query_params.get('search', '')
             model_filter = query_params.get('model', '')
+            category_filter = query_params.get('category', '')
             
             database_url = os.environ.get('DATABASE_URL')
             conn = psycopg2.connect(database_url)
@@ -46,6 +47,10 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             if model_filter and model_filter != 'all':
                 sql += " AND model = %s"
                 params.append(model_filter)
+            
+            if category_filter and category_filter != 'all':
+                sql += " AND LOWER(category) = %s"
+                params.append(category_filter.lower())
             
             sql += " ORDER BY name"
             

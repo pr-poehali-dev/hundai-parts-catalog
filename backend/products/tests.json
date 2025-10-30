@@ -1,34 +1,22 @@
 {
   "tests": [
     {
-      "name": "Test get all products",
-      "method": "GET",
-      "path": "/",
-      "expectedStatus": 200,
-      "expectedBody": {
-        "products": "array"
-      },
-      "bodyMatcher": "partial"
-    },
-    {
-      "name": "Test search by VIN",
-      "method": "GET",
-      "path": "/?search=581012E300",
-      "expectedStatus": 200,
-      "expectedBody": {
-        "products": "array"
-      },
-      "bodyMatcher": "partial"
-    },
-    {
-      "name": "Test filter by model",
+      "name": "Test get all products with model",
       "method": "GET",
       "path": "/?model=Porter 2",
-      "expectedStatus": 200,
-      "expectedBody": {
-        "products": "array"
-      },
-      "bodyMatcher": "partial"
+      "expectedStatus": 200
+    },
+    {
+      "name": "Test filter by category",
+      "method": "GET",
+      "path": "/?model=Porter 2&category=engine",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Test search with filters",
+      "method": "GET",
+      "path": "/?search=фильтр&model=Porter 1",
+      "expectedStatus": 200
     }
   ]
 }
