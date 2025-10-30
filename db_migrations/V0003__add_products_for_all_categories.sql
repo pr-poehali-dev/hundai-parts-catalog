@@ -1,0 +1,22 @@
+-- Add more products for different categories
+INSERT INTO products (name, vin, category, price, image_url, model, in_stock, description) VALUES 
+('Стойка стабилизатора передняя', '548302E000', 'подвеска', 890.0, 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400', 'Porter 2', true, 'Оригинальная стойка стабилизатора'),
+('Рычаг подвески нижний', '545012F100', 'подвеска', 3200.0, 'https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=400', 'Kia Bongo', true, 'Передний нижний рычаг'),
+('Тормозные колодки передние', '581012E800', 'тормозная система', 2100.0, 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=400', 'Porter 1', true, 'Комплект передних тормозных колодок'),
+('Цепь ГРМ', '243212F100', 'двигатель', 4500.0, 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400', 'Porter 2', true, 'Цепь газораспределительного механизма'),
+('Помпа водяная', '251312E300', 'cooling', 3800.0, 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400', 'Porter 1', true, 'Водяной насос системы охлаждения'),
+('Радиатор охлаждения', '253102E050', 'cooling', 8900.0, 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400', 'Porter 2', true, 'Радиатор основной системы охлаждения'),
+('Термостат', '255002F000', 'cooling', 1200.0, 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400', 'Kia Bongo', true, 'Термостат двигателя'),
+('КПП сцепление комплект', '412002E850', 'transmission', 12500.0, 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400', 'Porter 1', true, 'Полный комплект сцепления'),
+('Выжимной подшипник', '414202E100', 'transmission', 1800.0, 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400', 'Porter 2', true, 'Подшипник выключения сцепления'),
+('Вал карданный', '491002E800', 'transmission', 15600.0, 'https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=400', 'Kia Bongo', true, 'Карданный вал в сборе'),
+('Генератор 12V', '373002E400', 'electrical', 8900.0, 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400', 'Porter 1', true, 'Генератор переменного тока'),
+('Стартер', '361002E450', 'electrical', 7800.0, 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400', 'Porter 2', true, 'Стартер двигателя'),
+('Фара передняя правая', '921012E020', 'electrical', 4500.0, 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=400', 'Kia Bongo', true, 'Блок-фара правая'),
+('Бампер передний', '865112E000', 'body', 8900.0, 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400', 'Porter 1', true, 'Передний бампер в сборе'),
+('Крыло переднее правое', '663212E010', 'body', 5600.0, 'https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=400', 'Porter 2', true, 'Переднее правое крыло'),
+('Капот', '664002E040', 'body', 12000.0, 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400', 'Kia Bongo', true, 'Капот двигателя'),
+('Сиденье водителя', '881012E900', 'interior', 18500.0, 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400', 'Porter 1', true, 'Сиденье водителя с регулировками'),
+('Панель приборов', '846102E800', 'interior', 14200.0, 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400', 'Porter 2', true, 'Панель приборов в сборе'),
+('Руль', '561302F100', 'interior', 5600.0, 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=400', 'Kia Bongo', true, 'Рулевое колесо'),
+('ШРУС внутренний', '495012E100', 'transmission', 4200.0, 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400', 'Porter 1', true, 'Шарнир равных угловых скоростей');
