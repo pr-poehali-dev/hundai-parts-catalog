@@ -31,24 +31,39 @@ interface CartItem {
   image: string;
 }
 
+const categories = [
+  { id: 'engine', name: 'Двигатель', icon: 'Cog' },
+  { id: 'suspension', name: 'Подвеска', icon: 'CircleDot' },
+  { id: 'brakes', name: 'Тормозная система', icon: 'Disc' },
+  { id: 'transmission', name: 'Трансмиссия', icon: 'Settings' },
+  { id: 'electrical', name: 'Электрика', icon: 'Zap' },
+  { id: 'body', name: 'Кузов', icon: 'Box' },
+  { id: 'interior', name: 'Салон', icon: 'Armchair' },
+  { id: 'cooling', name: 'Охлаждение', icon: 'Wind' },
+];
+
 export default function Index() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedModel, setSelectedModel] = useState<string>('all');
+  const [selectedModel, setSelectedModel] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchProducts();
-  }, [searchQuery, selectedModel]);
+    if (selectedModel) {
+      fetchProducts();
+    }
+  }, [searchQuery, selectedModel, selectedCategory]);
 
   const fetchProducts = async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
       if (searchQuery) params.append('search', searchQuery);
-      if (selectedModel !== 'all') params.append('model', selectedModel);
+      if (selectedModel) params.append('model', selectedModel);
+      if (selectedCategory !== 'all') params.append('category', selectedCategory);
       
       const url = `https://functions.poehali.dev/b7c86ff6-479a-4a9c-8d8c-6ce8b3b1ecdc${params.toString() ? '?' + params.toString() : ''}`;
       const response = await fetch(url);
@@ -178,25 +193,75 @@ export default function Index() {
       </section>
 
       <section className="container mx-auto px-4 py-12">
-        <div className="flex flex-wrap gap-3 mb-8 justify-center animate-slide-up">
-          {['all', 'Porter 1', 'Porter 2', 'Kia Bongo'].map((model) => (
-            <Button
-              key={model}
-              variant={selectedModel === model ? 'default' : 'outline'}
-              onClick={() => setSelectedModel(model)}
-              className={selectedModel === model ? 'bg-accent hover:bg-accent/90' : ''}
-            >
-              {model === 'all' ? 'Все модели' : model}
-            </Button>
-          ))}
-        </div>
+        {!selectedModel ? (
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold text-center mb-8">Выберите модель автомобиля</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {['Porter 1', 'Porter 2', 'Kia Bongo'].map((model) => (
+                <Card 
+                  key={model}
+                  className="cursor-pointer hover:shadow-xl transition-all hover:scale-105"
+                  onClick={() => setSelectedModel(model)}
+                >
+                  <CardContent className="p-8 text-center">
+                    <Icon name="Truck" size={64} className="mx-auto mb-4 text-primary" />
+                    <h3 className="text-2xl font-bold">{model}</h3>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="mb-8">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSelectedModel(null);
+                  setSelectedCategory('all');
+                  setProducts([]);
+                }}
+                className="mb-4"
+              >
+                <Icon name="ArrowLeft" size={20} className="mr-2" />
+                Назад к выбору модели
+              </Button>
+              <h2 className="text-2xl font-bold mb-2">Модель: {selectedModel}</h2>
+              <p className="text-gray-600">Выберите категорию запчастей</p>
+            </div>
 
-        {loading ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              <Button
+                variant={selectedCategory === 'all' ? 'default' : 'outline'}
+                onClick={() => setSelectedCategory('all')}
+                className={`h-auto py-4 flex flex-col gap-2 ${selectedCategory === 'all' ? 'bg-accent hover:bg-accent/90' : ''}`}
+              >
+                <Icon name="Grid3x3" size={32} />
+                <span>Все категории</span>
+              </Button>
+              {categories.map((cat) => (
+                <Button
+                  key={cat.id}
+                  variant={selectedCategory === cat.id ? 'default' : 'outline'}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`h-auto py-4 flex flex-col gap-2 ${selectedCategory === cat.id ? 'bg-accent hover:bg-accent/90' : ''}`}
+                >
+                  <Icon name={cat.icon as any} size={32} />
+                  <span className="text-sm">{cat.name}</span>
+                </Button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {selectedModel && loading && (
           <div className="text-center py-16">
             <Icon name="Loader2" size={64} className="animate-spin mx-auto text-gray-400 mb-4" />
             <p className="text-gray-500">Загрузка товаров...</p>
           </div>
-        ) : (
+        )}
+        
+        {selectedModel && !loading && filteredProducts.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProducts.map((product, index) => (
             <Card 
@@ -264,7 +329,7 @@ export default function Index() {
           </div>
         )}
 
-        {!loading && filteredProducts.length === 0 && (
+        {selectedModel && !loading && filteredProducts.length === 0 && (
           <div className="text-center py-16 animate-fade-in">
             <Icon name="SearchX" size={64} className="mx-auto text-gray-400 mb-4" />
             <h3 className="text-2xl font-bold text-gray-600 mb-2">Ничего не найдено</h3>
