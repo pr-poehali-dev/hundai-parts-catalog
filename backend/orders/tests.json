@@ -1,0 +1,46 @@
+{
+  "tests": [
+    {
+      "name": "Test create order",
+      "method": "POST",
+      "path": "/",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "customer_name": "Тестовый Клиент",
+        "customer_phone": "+7 999 123-45-67",
+        "customer_email": "test@example.com",
+        "items": [
+          {
+            "product_name": "Тормозные колодки",
+            "product_vin": "581012E300",
+            "product_model": "Porter 2",
+            "price": 3500,
+            "quantity": 2
+          }
+        ],
+        "total_amount": 7000
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true,
+        "order_number": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Test missing fields",
+      "method": "POST",
+      "path": "/",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "customer_name": "Test"
+      },
+      "expectedStatus": 400,
+      "bodyMatcher": "partial"
+    }
+  ]
+}

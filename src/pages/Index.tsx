@@ -5,6 +5,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
+import Cart from '@/components/Cart';
 
 interface Product {
   id: number;
@@ -80,10 +81,21 @@ const mockProducts: Product[] = [
   }
 ];
 
+interface CartItem {
+  id: number;
+  name: string;
+  vin: string;
+  model: string;
+  price: number;
+  quantity: number;
+  image: string;
+}
+
 export default function Index() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedModel, setSelectedModel] = useState<string>('all');
-  const [cart, setCart] = useState<{[key: number]: number}>({});
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const filteredProducts = mockProducts.filter(product => {
     const matchesSearch = searchQuery === '' || 
@@ -95,17 +107,47 @@ export default function Index() {
     return matchesSearch && matchesModel;
   });
 
-  const addToCart = (productId: number) => {
-    setCart(prev => ({
-      ...prev,
-      [productId]: (prev[productId] || 0) + 1
-    }));
+  const addToCart = (product: Product) => {
+    setCartItems(prev => {
+      const existingItem = prev.find(item => item.id === product.id);
+      if (existingItem) {
+        return prev.map(item =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+      return [...prev, {
+        id: product.id,
+        name: product.name,
+        vin: product.vin,
+        model: product.model,
+        price: product.price,
+        quantity: 1,
+        image: product.image
+      }];
+    });
     toast.success('Товар добавлен в корзину', {
       duration: 2000,
     });
   };
 
-  const cartItemsCount = Object.values(cart).reduce((sum, count) => sum + count, 0);
+  const updateQuantity = (id: number, quantity: number) => {
+    setCartItems(prev =>
+      prev.map(item => item.id === id ? { ...item, quantity } : item)
+    );
+  };
+
+  const removeItem = (id: number) => {
+    setCartItems(prev => prev.filter(item => item.id !== id));
+    toast.success('Товар удален из корзины');
+  };
+
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
+  const cartItemsCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -126,7 +168,7 @@ export default function Index() {
             
             <button 
               className="relative bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-all hover:scale-105"
-              onClick={() => toast.info('Корзина в разработке')}
+              onClick={() => setIsCartOpen(true)}
             >
               <Icon name="ShoppingCart" size={24} />
               <span className="font-semibold">Корзина</span>
@@ -236,7 +278,7 @@ export default function Index() {
                 <Button 
                   className="w-full bg-accent hover:bg-accent/90 text-white font-semibold h-12 text-lg"
                   disabled={!product.inStock}
-                  onClick={() => addToCart(product.id)}
+                  onClick={() => addToCart(product)}
                 >
                   {product.inStock ? (
                     <>
@@ -296,6 +338,15 @@ export default function Index() {
           </div>
         </div>
       </footer>
+
+      <Cart 
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        items={cartItems}
+        onUpdateQuantity={updateQuantity}
+        onRemoveItem={removeItem}
+        onClearCart={clearCart}
+      />
     </div>
   );
 }
