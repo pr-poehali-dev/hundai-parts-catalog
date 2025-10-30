@@ -158,7 +158,7 @@ export default function Index() {
               <img 
                 src="https://cdn.poehali.dev/files/b227f76b-a8a4-4f92-be33-c3aa6fd57c0c.png" 
                 alt="PORTER PRO" 
-                className="h-16 w-16 object-contain"
+                className="h-16 w-16 object-contain rounded-full"
               />
               <div className="text-white">
                 <h1 className="text-2xl font-bold">PORTER PRO</h1>
