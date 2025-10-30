@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
 import Cart from '@/components/Cart';
+import FloatingContactButton from '@/components/FloatingContactButton';
 
 interface Product {
   id: number;
@@ -336,6 +337,8 @@ export default function Index() {
         onRemoveItem={removeItem}
         onClearCart={clearCart}
       />
+      
+      <FloatingContactButton />
     </div>
   );
 }
