@@ -1,0 +1,34 @@
+{
+  "tests": [
+    {
+      "name": "Test get all products",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "products": "array"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Test search by VIN",
+      "method": "GET",
+      "path": "/?search=581012E300",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "products": "array"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Test filter by model",
+      "method": "GET",
+      "path": "/?model=Porter 2",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "products": "array"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

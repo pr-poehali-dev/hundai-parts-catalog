@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -18,68 +18,7 @@ interface Product {
   inStock: boolean;
 }
 
-const mockProducts: Product[] = [
-  {
-    id: 1,
-    name: 'Тормозные колодки передние',
-    vin: '581012E300',
-    category: 'Тормозная система',
-    price: 3500,
-    image: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400',
-    model: 'Porter 2',
-    inStock: true
-  },
-  {
-    id: 2,
-    name: 'Масляный фильтр двигателя',
-    vin: '263004X000',
-    category: 'Двигатель',
-    price: 850,
-    image: 'https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=400',
-    model: 'Porter 1',
-    inStock: true
-  },
-  {
-    id: 3,
-    name: 'Воздушный фильтр',
-    vin: '281131D000',
-    category: 'Двигатель',
-    price: 1200,
-    image: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400',
-    model: 'Kia Bongo',
-    inStock: true
-  },
-  {
-    id: 4,
-    name: 'Свеча зажигания (комплект)',
-    vin: '1884411070',
-    category: 'Двигатель',
-    price: 2400,
-    image: 'https://images.unsplash.com/photo-1589666564459-93cdd3ab856c?w=400',
-    model: 'Porter 2',
-    inStock: false
-  },
-  {
-    id: 5,
-    name: 'Передний амортизатор',
-    vin: '546612E200',
-    category: 'Подвеска',
-    price: 5600,
-    image: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=400',
-    model: 'Porter 1',
-    inStock: true
-  },
-  {
-    id: 6,
-    name: 'Диск тормозной передний',
-    vin: '517122E300',
-    category: 'Тормозная система',
-    price: 4200,
-    image: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=400',
-    model: 'Kia Bongo',
-    inStock: true
-  }
-];
+
 
 interface CartItem {
   id: number;
@@ -96,16 +35,32 @@ export default function Index() {
   const [selectedModel, setSelectedModel] = useState<string>('all');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredProducts = mockProducts.filter(product => {
-    const matchesSearch = searchQuery === '' || 
-      product.vin.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.name.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesModel = selectedModel === 'all' || product.model === selectedModel;
-    
-    return matchesSearch && matchesModel;
-  });
+  useEffect(() => {
+    fetchProducts();
+  }, [searchQuery, selectedModel]);
+
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (searchQuery) params.append('search', searchQuery);
+      if (selectedModel !== 'all') params.append('model', selectedModel);
+      
+      const url = `https://functions.poehali.dev/b7c86ff6-479a-4a9c-8d8c-6ce8b3b1ecdc${params.toString() ? '?' + params.toString() : ''}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      setProducts(data.products || []);
+    } catch (error) {
+      toast.error('Ошибка загрузки товаров');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredProducts = products;
 
   const addToCart = (product: Product) => {
     setCartItems(prev => {
@@ -235,8 +190,14 @@ export default function Index() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProducts.map((product, index) => (
+        {loading ? (
+          <div className="text-center py-16">
+            <Icon name="Loader2" size={64} className="animate-spin mx-auto text-gray-400 mb-4" />
+            <p className="text-gray-500">Загрузка товаров...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredProducts.map((product, index) => (
             <Card 
               key={product.id} 
               className="overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-scale-in border-2"
@@ -298,10 +259,11 @@ export default function Index() {
                 </Button>
               </CardFooter>
             </Card>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
-        {filteredProducts.length === 0 && (
+        {!loading && filteredProducts.length === 0 && (
           <div className="text-center py-16 animate-fade-in">
             <Icon name="SearchX" size={64} className="mx-auto text-gray-400 mb-4" />
             <h3 className="text-2xl font-bold text-gray-600 mb-2">Ничего не найдено</h3>
