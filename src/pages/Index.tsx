@@ -1,14 +1,301 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import Icon from '@/components/ui/icon';
+import { toast } from 'sonner';
 
-const Index = () => {
+interface Product {
+  id: number;
+  name: string;
+  vin: string;
+  category: string;
+  price: number;
+  image: string;
+  model: 'Porter 1' | 'Porter 2' | 'Kia Bongo';
+  inStock: boolean;
+}
+
+const mockProducts: Product[] = [
+  {
+    id: 1,
+    name: 'Тормозные колодки передние',
+    vin: '581012E300',
+    category: 'Тормозная система',
+    price: 3500,
+    image: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400',
+    model: 'Porter 2',
+    inStock: true
+  },
+  {
+    id: 2,
+    name: 'Масляный фильтр двигателя',
+    vin: '263004X000',
+    category: 'Двигатель',
+    price: 850,
+    image: 'https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=400',
+    model: 'Porter 1',
+    inStock: true
+  },
+  {
+    id: 3,
+    name: 'Воздушный фильтр',
+    vin: '281131D000',
+    category: 'Двигатель',
+    price: 1200,
+    image: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400',
+    model: 'Kia Bongo',
+    inStock: true
+  },
+  {
+    id: 4,
+    name: 'Свеча зажигания (комплект)',
+    vin: '1884411070',
+    category: 'Двигатель',
+    price: 2400,
+    image: 'https://images.unsplash.com/photo-1589666564459-93cdd3ab856c?w=400',
+    model: 'Porter 2',
+    inStock: false
+  },
+  {
+    id: 5,
+    name: 'Передний амортизатор',
+    vin: '546612E200',
+    category: 'Подвеска',
+    price: 5600,
+    image: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=400',
+    model: 'Porter 1',
+    inStock: true
+  },
+  {
+    id: 6,
+    name: 'Диск тормозной передний',
+    vin: '517122E300',
+    category: 'Тормозная система',
+    price: 4200,
+    image: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=400',
+    model: 'Kia Bongo',
+    inStock: true
+  }
+];
+
+export default function Index() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedModel, setSelectedModel] = useState<string>('all');
+  const [cart, setCart] = useState<{[key: number]: number}>({});
+
+  const filteredProducts = mockProducts.filter(product => {
+    const matchesSearch = searchQuery === '' || 
+      product.vin.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.name.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesModel = selectedModel === 'all' || product.model === selectedModel;
+    
+    return matchesSearch && matchesModel;
+  });
+
+  const addToCart = (productId: number) => {
+    setCart(prev => ({
+      ...prev,
+      [productId]: (prev[productId] || 0) + 1
+    }));
+    toast.success('Товар добавлен в корзину', {
+      duration: 2000,
+    });
+  };
+
+  const cartItemsCount = Object.values(cart).reduce((sum, count) => sum + count, 0);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4 color-black text-black">Добро пожаловать!</h1>
-        <p className="text-xl text-gray-600">тут будет отображаться ваш проект</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <header className="bg-primary shadow-lg sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <img 
+                src="https://cdn.poehali.dev/files/b227f76b-a8a4-4f92-be33-c3aa6fd57c0c.png" 
+                alt="PORTER PRO" 
+                className="h-16 w-16 object-contain"
+              />
+              <div className="text-white">
+                <h1 className="text-2xl font-bold">PORTER PRO</h1>
+                <p className="text-sm text-gray-300">Автозапчасти для Porter & Bongo</p>
+              </div>
+            </div>
+            
+            <button 
+              className="relative bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-all hover:scale-105"
+              onClick={() => toast.info('Корзина в разработке')}
+            >
+              <Icon name="ShoppingCart" size={24} />
+              <span className="font-semibold">Корзина</span>
+              {cartItemsCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-white text-accent w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold">
+                  {cartItemsCount}
+                </span>
+              )}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <section className="bg-primary text-white py-16">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center animate-fade-in">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Найдите нужную запчасть по VIN-номеру
+            </h2>
+            <p className="text-xl text-gray-300 mb-8">
+              Для Hyundai Porter 1, Porter 2 и Kia Bongo
+            </p>
+            
+            <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
+              <div className="relative flex-1 max-w-xl w-full">
+                <Icon name="Search" size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder="Введите VIN-номер или название запчасти..."
+                  className="pl-12 h-14 text-lg bg-white"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <Button 
+                size="lg" 
+                className="bg-accent hover:bg-accent/90 text-white h-14 px-8 text-lg font-semibold"
+              >
+                Найти
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="container mx-auto px-4 py-12">
+        <div className="flex flex-wrap gap-3 mb-8 justify-center animate-slide-up">
+          {['all', 'Porter 1', 'Porter 2', 'Kia Bongo'].map((model) => (
+            <Button
+              key={model}
+              variant={selectedModel === model ? 'default' : 'outline'}
+              onClick={() => setSelectedModel(model)}
+              className={selectedModel === model ? 'bg-accent hover:bg-accent/90' : ''}
+            >
+              {model === 'all' ? 'Все модели' : model}
+            </Button>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredProducts.map((product, index) => (
+            <Card 
+              key={product.id} 
+              className="overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-scale-in border-2"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <div className="relative h-56 overflow-hidden bg-gray-100">
+                <img 
+                  src={product.image} 
+                  alt={product.name}
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                />
+                <Badge 
+                  className="absolute top-3 right-3 bg-primary text-white"
+                >
+                  {product.model}
+                </Badge>
+                {!product.inStock && (
+                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                    <Badge variant="destructive" className="text-lg px-4 py-2">
+                      Нет в наличии
+                    </Badge>
+                  </div>
+                )}
+              </div>
+              
+              <CardContent className="p-6">
+                <h3 className="font-bold text-xl mb-2">{product.name}</h3>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <Icon name="Hash" size={16} />
+                    <span className="font-mono">VIN: {product.vin}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="Package" size={16} />
+                    <span>{product.category}</span>
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="text-3xl font-bold text-accent">
+                    {product.price.toLocaleString('ru-RU')} ₽
+                  </span>
+                </div>
+              </CardContent>
+              
+              <CardFooter className="p-6 pt-0">
+                <Button 
+                  className="w-full bg-accent hover:bg-accent/90 text-white font-semibold h-12 text-lg"
+                  disabled={!product.inStock}
+                  onClick={() => addToCart(product.id)}
+                >
+                  {product.inStock ? (
+                    <>
+                      <Icon name="ShoppingCart" size={20} />
+                      <span>В корзину</span>
+                    </>
+                  ) : (
+                    'Недоступно'
+                  )}
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+
+        {filteredProducts.length === 0 && (
+          <div className="text-center py-16 animate-fade-in">
+            <Icon name="SearchX" size={64} className="mx-auto text-gray-400 mb-4" />
+            <h3 className="text-2xl font-bold text-gray-600 mb-2">Ничего не найдено</h3>
+            <p className="text-gray-500">Попробуйте изменить параметры поиска</p>
+          </div>
+        )}
+      </section>
+
+      <footer className="bg-primary text-white py-12 mt-16">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+              <h3 className="font-bold text-xl mb-4">О нас</h3>
+              <p className="text-gray-300">
+                Качественные автозапчасти для Hyundai Porter и Kia Bongo
+              </p>
+            </div>
+            <div>
+              <h3 className="font-bold text-xl mb-4">Контакты</h3>
+              <div className="space-y-2 text-gray-300">
+                <div className="flex items-center gap-2">
+                  <Icon name="Phone" size={18} />
+                  <span>+7 (XXX) XXX-XX-XX</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Icon name="Mail" size={18} />
+                  <span>info@porterpro.ru</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h3 className="font-bold text-xl mb-4">Режим работы</h3>
+              <p className="text-gray-300">
+                Пн-Пт: 9:00 - 18:00<br />
+                Сб-Вс: 10:00 - 16:00
+              </p>
+            </div>
+          </div>
+          <div className="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
+            <p>© 2024 PORTER PRO. Все права защищены.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
-};
-
-export default Index;
+}
