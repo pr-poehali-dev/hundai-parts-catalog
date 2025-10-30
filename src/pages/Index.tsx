@@ -283,7 +283,7 @@ export default function Index() {
             </div>
             <div>
               <h3 className="font-bold text-xl mb-4">Контакты</h3>
-              <div className="space-y-2 text-gray-300">
+              <div className="space-y-3 text-gray-300">
                 <div className="flex items-center gap-2">
                   <Icon name="Phone" size={18} />
                   <span>+7 (XXX) XXX-XX-XX</span>
@@ -291,6 +291,26 @@ export default function Index() {
                 <div className="flex items-center gap-2">
                   <Icon name="Mail" size={18} />
                   <span>info@porterpro.ru</span>
+                </div>
+                <div className="flex gap-3 mt-4">
+                  <a 
+                    href="https://wa.me/79999999999" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  >
+                    <Icon name="MessageCircle" size={20} />
+                    WhatsApp
+                  </a>
+                  <a 
+                    href="https://t.me/porterpro" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+                  >
+                    <Icon name="Send" size={20} />
+                    Telegram
+                  </a>
                 </div>
               </div>
             </div>
