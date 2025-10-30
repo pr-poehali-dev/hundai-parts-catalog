@@ -151,8 +151,15 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <header className="bg-primary shadow-lg sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
+      <header className="bg-primary shadow-lg sticky top-0 z-50 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <img 
+            src="https://cdn.poehali.dev/files/fa612bb4-06b7-42e7-b9a6-e6a013cc9972.jpg"
+            alt=""
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="container mx-auto px-4 py-4 relative z-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <img 
